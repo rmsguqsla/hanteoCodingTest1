@@ -32,9 +32,26 @@ public class SongBoardCategoryRepository implements CategoryRepository {
 
     @Override
     public Response findCategoryListById(Long id) {
-        List<Response> result = new ArrayList<>();
+        Response result = new Response();
+        recursion(result, id);
 
-        return null;
+        return result;
+    }
+
+    private void recursion(Response result, Long id) {
+        if (id == null) {
+            Response response = new Response(id);
+            result.getResponseList().add(response);
+            return;
+        }
+        Long currentId = id;
+        for (int i = 0; i < categoryList.size(); i++) {
+            SongBoardCategory category = (SongBoardCategory) categoryList.get(i);
+            if (category.getParentId().equals(currentId)) {
+                currentId = category.getId();
+                recursion(result, currentId);
+            }
+        }
     }
 
     @Override
